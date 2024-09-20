@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 20_240_920_051_509) do
+ActiveRecord::Schema[7.1].define(version: 20_240_920_051_928) do
   # These are extensions that must be enabled in order to support this database
   enable_extension 'plpgsql'
 
@@ -22,21 +22,33 @@ ActiveRecord::Schema[7.1].define(version: 20_240_920_051_509) do
   end
 
   create_table 'patients', force: :cascade do |t|
-    t.string 'insurance_number'
-    t.string 'first_name'
-    t.string 'last_name'
-    t.datetime 'date_of_birth'
-    t.string 'gender'
-    t.string 'address'
-    t.string 'phone_number'
-    t.string 'email'
-    t.string 'blood_type'
-    t.text 'allergies'
+    t.string 'insurance_number', null: false
+    t.string 'first_name', null: false
+    t.string 'last_name', null: false
+    t.datetime 'date_of_birth', null: false
+    t.string 'gender', null: false
+    t.string 'address', null: false
+    t.string 'phone_number', null: false
+    t.string 'email', null: false
+    t.string 'blood_type', null: false
+    t.text 'allergies', null: false
     t.datetime 'created_at', null: false
     t.datetime 'updated_at', null: false
     t.index ['email'], name: 'index_patients_on_email', unique: true
     t.index ['insurance_number'], name: 'index_patients_on_insurance_number', unique: true
   end
 
+  create_table 'visits', force: :cascade do |t|
+    t.bigint 'medical_record_id', null: false
+    t.integer 'visit_type', default: 0, null: false
+    t.integer 'priority_level', null: false
+    t.datetime 'start_date', null: false
+    t.datetime 'end_date', null: false
+    t.datetime 'created_at', null: false
+    t.datetime 'updated_at', null: false
+    t.index ['medical_record_id'], name: 'index_visits_on_medical_record_id'
+  end
+
   add_foreign_key 'medical_records', 'patients'
+  add_foreign_key 'visits', 'medical_records'
 end
