@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_24_194253) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_24_195019) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,6 +28,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_194253) do
     t.bigint "department_id", null: false
     t.index ["department_id"], name: "index_doctors_on_department_id"
     t.index ["user_id"], name: "index_doctors_on_user_id"
+  end
+
+  create_table "laboratory_results", force: :cascade do |t|
+    t.string "test_type"
+    t.string "test_name"
+    t.text "test_result"
+    t.datetime "performed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "record_id", null: false
+    t.index ["record_id"], name: "index_laboratory_results_on_record_id"
   end
 
   create_table "medical_records", force: :cascade do |t|
@@ -90,6 +101,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_194253) do
 
   add_foreign_key "doctors", "departments"
   add_foreign_key "doctors", "users"
+  add_foreign_key "laboratory_results", "medical_records", column: "record_id"
   add_foreign_key "medical_records", "doctors"
   add_foreign_key "medical_records", "patients"
   add_foreign_key "prescriptions", "medical_records", column: "record_id"
