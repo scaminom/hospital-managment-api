@@ -3,7 +3,7 @@ FactoryBot.define do
     medical_record { nil }
     visit_type { 1 }
     priority_level { 1 }
-    start_date { "2024-09-20 00:19:28" }
-    end_date { "2024-09-20 00:19:28" }
+    start_date { "2024-09-24 14:42:53" }
+    end_date { "2024-09-24 14:42:53" }
   end
 end
