@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_23_234127) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_24_194253) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,8 +32,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_234127) do
 
   create_table "medical_records", force: :cascade do |t|
     t.bigint "patient_id", null: false
+    t.bigint "doctor_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["doctor_id"], name: "index_medical_records_on_doctor_id"
     t.index ["patient_id"], name: "index_medical_records_on_patient_id"
   end
 
@@ -54,6 +56,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_234127) do
     t.index ["insurance_number"], name: "index_patients_on_insurance_number", unique: true
   end
 
+  create_table "prescriptions", force: :cascade do |t|
+    t.string "medication"
+    t.string "dosage"
+    t.string "duration"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "record_id", null: false
+    t.index ["record_id"], name: "index_prescriptions_on_record_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "username", null: false
     t.string "email", null: false
@@ -66,18 +78,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_23_234127) do
   end
 
   create_table "visits", force: :cascade do |t|
-    t.bigint "medical_record_id", null: false
-    t.integer "visit_type", default: 0, null: false
-    t.integer "priority_level", null: false
-    t.datetime "start_date", null: false
-    t.datetime "end_date", null: false
+    t.integer "visit_type"
+    t.integer "priority_level"
+    t.datetime "start_date"
+    t.datetime "end_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "medical_record_id", null: false
     t.index ["medical_record_id"], name: "index_visits_on_medical_record_id"
   end
 
   add_foreign_key "doctors", "departments"
   add_foreign_key "doctors", "users"
+  add_foreign_key "medical_records", "doctors"
   add_foreign_key "medical_records", "patients"
+  add_foreign_key "prescriptions", "medical_records", column: "record_id"
   add_foreign_key "visits", "medical_records"
 end
