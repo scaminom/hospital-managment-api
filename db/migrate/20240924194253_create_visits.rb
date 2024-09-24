@@ -1,10 +1,9 @@
 class CreateVisits < ActiveRecord::Migration[7.1]
   def change
     create_table :visits do |t|
-      t.integer :visit_type
-      t.integer :priority_level
-      t.datetime :start_date
-      t.datetime :end_date
+      t.integer :visit_type, null: false
+      t.integer :priority_level, null: false
+      t.datetime :date, null: false
 
       t.timestamps
 

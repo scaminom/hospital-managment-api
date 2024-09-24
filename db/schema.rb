@@ -31,10 +31,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_195019) do
   end
 
   create_table "laboratory_results", force: :cascade do |t|
-    t.string "test_type"
-    t.string "test_name"
-    t.text "test_result"
-    t.datetime "performed_at"
+    t.string "test_type", null: false
+    t.string "test_name", null: false
+    t.text "test_result", null: false
+    t.datetime "performed_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "record_id", null: false
@@ -68,9 +68,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_195019) do
   end
 
   create_table "prescriptions", force: :cascade do |t|
-    t.string "medication"
-    t.string "dosage"
-    t.string "duration"
+    t.string "medication", null: false
+    t.string "dosage", null: false
+    t.string "duration", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "record_id", null: false
@@ -89,10 +89,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_24_195019) do
   end
 
   create_table "visits", force: :cascade do |t|
-    t.integer "visit_type"
-    t.integer "priority_level"
-    t.datetime "start_date"
-    t.datetime "end_date"
+    t.integer "visit_type", null: false
+    t.integer "priority_level", null: false
+    t.datetime "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "medical_record_id", null: false
