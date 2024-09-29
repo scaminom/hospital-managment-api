@@ -12,6 +12,7 @@ class CreateAnamneses < ActiveRecord::Migration[7.1]
       t.string :religion, null: false
       t.string :handedness, null: false
       t.string :family_reference, null: false
+      t.timestamps
 
       t.references :visit, null: false, foreign_key: true
     end

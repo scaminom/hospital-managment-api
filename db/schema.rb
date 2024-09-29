@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_25_165723) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_29_135357) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,6 +26,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_165723) do
     t.string "religion", null: false
     t.string "handedness", null: false
     t.string "family_reference", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.bigint "visit_id", null: false
     t.index ["visit_id"], name: "index_anamneses_on_visit_id"
   end
@@ -53,8 +55,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_165723) do
     t.datetime "performed_at", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "record_id", null: false
-    t.index ["record_id"], name: "index_laboratory_results_on_record_id"
+    t.bigint "visit_id"
+    t.index ["visit_id"], name: "index_laboratory_results_on_visit_id"
   end
 
   create_table "medical_records", force: :cascade do |t|
@@ -89,8 +91,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_165723) do
     t.string "duration", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "record_id", null: false
-    t.index ["record_id"], name: "index_prescriptions_on_record_id"
+    t.bigint "visit_id"
+    t.index ["visit_id"], name: "index_prescriptions_on_visit_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -119,9 +121,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_25_165723) do
   add_foreign_key "anamneses", "visits"
   add_foreign_key "doctors", "departments"
   add_foreign_key "doctors", "users"
-  add_foreign_key "laboratory_results", "medical_records", column: "record_id"
+  add_foreign_key "laboratory_results", "visits"
   add_foreign_key "medical_records", "doctors"
   add_foreign_key "medical_records", "patients"
-  add_foreign_key "prescriptions", "medical_records", column: "record_id"
+  add_foreign_key "prescriptions", "visits"
   add_foreign_key "visits", "medical_records"
 end
