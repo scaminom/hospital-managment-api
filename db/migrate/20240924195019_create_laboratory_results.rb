@@ -7,7 +7,7 @@ class CreateLaboratoryResults < ActiveRecord::Migration[7.1]
       t.datetime :performed_at, null: false
 
       t.timestamps
-      t.references :record, index: true, foreign_key: { to_table: :medical_records }, null: false
+      t.references :visit, null: true, foreign_key: true
     end
   end
 end
