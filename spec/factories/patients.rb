@@ -1,14 +1,15 @@
 FactoryBot.define do
   factory :patient do
-    insurance_number { 'MyString' }
-    first_name { 'MyString' }
-    last_name { 'MyString' }
-    date_of_birth { '2024-09-20 00:08:33' }
-    gender { 'MyString' }
-    address { 'MyString' }
-    phone_number { 'MyString' }
-    email { 'MyString' }
-    blood_type { 'MyString' }
-    allergies { 'MyText' }
+    insurance_number { "#{Faker::Number.number(digits: 3)}-#{Faker::Alphanumeric.alpha(number: 3).upcase}" }
+    first_name { Faker::Name.first_name.gsub(/[^a-zA-Z]/, '')[0...50] }
+    last_name { Faker::Name.last_name.gsub(/[^a-zA-Z]/, '')[0...50] }
+    date_of_birth { Faker::Date.birthday(min_age: 18, max_age: 90) }
+    gender { Patient::VALID_GENDERS.sample }
+    address { Faker::Address.full_address }
+    phone_number { Faker::Number.number(digits: 10).to_s }
+    sequence(:email) { |n| "#{Faker::Internet.user_name(specifier: 10)}#{n}@#{Faker::Internet.domain_name}" }
+    blood_type { Patient::VALID_BLOOD_TYPES.sample }
+    allergies { Faker::Lorem.paragraph(sentence_count: 2)[0...255] }
   end
 end
+

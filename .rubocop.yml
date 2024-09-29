@@ -19,7 +19,6 @@ AllCops:
     - "script/**/*"
     - "bin/*"
     - "vendor/**/*"
-
 Style/AndOr:
   Enabled: false
 
@@ -78,6 +77,9 @@ Style/StringMethods:
   Enabled: true
 
 Style/WordArray:
+  Enabled: false
+
+Rails/I18nLocaleTexts:
   Enabled: false
 
 Metrics/BlockLength:
