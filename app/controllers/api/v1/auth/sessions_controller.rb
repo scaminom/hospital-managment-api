@@ -9,7 +9,11 @@ module Api
         private
 
         def respond_with(_current_user, _opts = {})
-          render_success_response(data: { token: current_token })
+          render_success_response(data: {
+                                    user: {
+                                      token: current_token
+                                    }
+                                  })
         end
 
         def respond_to_on_destroy

@@ -97,7 +97,7 @@ Devise.setup do |config|
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
-  config.skip_session_storage = []
+  config.skip_session_storage = %i[http_auth params_auth]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX
@@ -320,9 +320,5 @@ Devise.setup do |config|
     ]
     jwt.expiration_time = 2.days.from_now.to_i
     jwt.algorithm = 'HS256'
-  end
-
-  config.warden do |warden|
-    warden.scope_defaults :user, store: false
   end
 end

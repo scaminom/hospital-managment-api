@@ -22,11 +22,7 @@ class DoctorRegistrationService
   end
 
   def save_doctor
-    if @doctor.save
-      JsonResponse.new(success: true, data: @doctor)
-    else
-      JsonResponse.new(success: false, errors: @doctor.errors.full_messages)
-    end
+    @doctor.save
+    @doctor
   end
 end
-
