@@ -23,8 +23,11 @@ module Api
         if patient.save
           render_success_response(data: { patient: }, status: :created)
         else
-          render_error_response(patient.errors.full_messages, status:  :unprocessable_entity,
-                                                              message: 'patient data could not be created')
+          render_error_response(
+            patient.errors.full_messages,
+            status:  :unprocessable_entity,
+            message: 'patient data could not be created'
+          )
         end
       end
 
@@ -32,8 +35,11 @@ module Api
         if @patient.update(patient_params)
           render_success_response(data: { patient: @patient }, status: :created)
         else
-          render_error_response(@patient.errors.full_messages, status:  :unprocessable_entity,
-                                                               message: 'patient could not be updated')
+          render_error_response(
+            @patient.errors.full_messages,
+            status:  :unprocessable_entity,
+            message: 'patient could not be updated'
+          )
         end
       end
 
@@ -41,8 +47,11 @@ module Api
         if @patient.destroy
           render_success_response(message: 'patient deleted successfully')
         else
-          render_error_response(@patient.errors.full_messages, status:  404,
-                                                               message: 'patient could not be deleted')
+          render_error_response(
+            @patient.errors.full_messages,
+            status:  404,
+            message: 'patient could not be deleted'
+          )
         end
       end
 

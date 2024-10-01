@@ -4,15 +4,21 @@ module Api
   module V1
     module Auth
       class SessionsController < Devise::SessionsController
+        prepend_before_action :allow_params_authentication!, only: :create
+
         respond_to :json
 
-        private
+        def create
+          resource = warden.authenticate(auth_options)
 
-        def respond_with(_current_user, _opts = {})
-          render_success_response(data: { token: current_token })
+          if resource
+            respond_with
+          else
+            handle_invalid_login
+          end
         end
 
-        def respond_to_on_destroy
+        def destroy
           token = extract_token_from_header
           return handle_missing_token if token.nil?
 
@@ -25,7 +31,36 @@ module Api
           current_user = find_user(jwt_payload)
           return handle_user_not_found if current_user.nil?
 
+          sign_out(current_user)
           handle_successful_logout
+        end
+
+        protected
+
+        def auth_options
+          { scope: resource_name, recall: "#{controller_path}#create" }
+        end
+
+        private
+
+        def respond_with
+          render_success_response(
+            data:    {
+              user: {
+                token: current_token
+              }
+            },
+            message: 'Logged in successfully.',
+            status:  :ok
+          )
+        end
+
+        def handle_invalid_login
+          render_error_response(
+            error:   ['Invalid email or password'],
+            message: 'Authentication failed. Please check your credentials and try again.',
+            status:  :unauthorized
+          )
         end
 
         def extract_token_from_header

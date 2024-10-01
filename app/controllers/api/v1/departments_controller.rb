@@ -23,8 +23,11 @@ module Api
         if department.save
           render_success_response(data: { department: }, status: :created)
         else
-          render_error_response(department.errors.full_messages, status:  :unprocessable_entity,
-                                                                 message: 'department data could not be created')
+          render_error_response(
+            error:   department.errors.full_messages,
+            status:  :unprocessable_entity,
+            message: 'department data could not be created'
+          )
         end
       end
 
@@ -32,8 +35,11 @@ module Api
         if @department.update(department_params)
           render_success_response(data: { department: @department }, status: :created)
         else
-          render_error_response(@department.errors.full_messages, status:  :unprocessable_entity,
-                                                                  message: 'department could not be updated')
+          render_error_response(
+            error:   @department.errors.full_messages,
+            status:  :unprocessable_entity,
+            message: 'department could not be updated'
+          )
         end
       end
 
@@ -41,8 +47,11 @@ module Api
         if @department.destroy
           render_success_response(message: 'department deleted successfully')
         else
-          render_error_response(@department.errors.full_messages, status:  404,
-                                                                  message: 'department could not be deleted')
+          render_error_response(
+            error:   @department.errors.full_messages,
+            status:  404,
+            message: 'department could not be deleted'
+          )
         end
       end
 

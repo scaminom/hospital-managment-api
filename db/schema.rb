@@ -38,13 +38,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_29_135357) do
   end
 
   create_table "doctors", force: :cascade do |t|
-    t.string "first_name", null: false
-    t.string "last_name", null: false
     t.string "speciality", null: false
     t.string "license_number", null: false
     t.bigint "user_id", null: false
-    t.bigint "department_id", null: false
+    t.bigint "department_id"
     t.index ["department_id"], name: "index_doctors_on_department_id"
+    t.index ["license_number"], name: "index_doctors_on_license_number", unique: true
     t.index ["user_id"], name: "index_doctors_on_user_id"
   end
 
