@@ -5,7 +5,8 @@ class Doctor < ApplicationRecord
   accepts_nested_attributes_for :user, update_only: true
 
   validates :speciality, presence: true
-  validates :license_number, presence: true, uniqueness: true
+  validates :license_number, presence: true, uniqueness: true,
+                             format: { with: /\A[A-Z]{2}\d{6}\z/, message: 'must be in the format AA123456' }
 
   WHITELISTED_ATTRIBUTES = [
     :speciality,
@@ -16,3 +17,4 @@ class Doctor < ApplicationRecord
     }
   ].freeze
 end
+

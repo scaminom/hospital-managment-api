@@ -36,7 +36,11 @@ module Api
 
       def update
         if @doctor.update(doctor_params)
-          render_success_response(data: { doctor: @doctor }, status: :created)
+          render_success_response(
+            data:    { doctor: @doctor },
+            status:  :created,
+            message: 'doctor updated successfully'
+          )
         else
           render_error_response(
             error:   @doctor.errors.full_messages,

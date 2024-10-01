@@ -17,5 +17,5 @@ Rails.application.routes.draw do
   end
 
   get 'up' => 'rails/health#show', as: :rails_health_check
-  match '*unmatched', to: 'application#no_route_found', via: :all
+  match '*any', to: 'application#no_route_found', via: :all
 end

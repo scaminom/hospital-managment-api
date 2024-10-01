@@ -25,9 +25,15 @@ module ApiExceptionsHandler
     handle_record_not_unique(e)
   rescue StandardError => e
     handle_standard_error(e)
+  rescue AbstractController::ActionNotFound => e
+    handle_action_not_found(e)
   end
 
   private
+
+  def handle_action_not_found(exception)
+    render_error_response(error: format_error_message(exception), status: 404)
+  end
 
   def handle_record_not_found(exception)
     render_error_response(error: format_error_message(exception), status: 404)
@@ -43,7 +49,7 @@ module ApiExceptionsHandler
 
   def handle_no_route_found(_exception)
     route_info = "No route matches [#{request.method}] \"#{request.original_fullpath}\""
-    render_error_response(error: route_info, status: 404)
+    render_error_response(error: [route_info], status: 404)
   end
 
   def handle_unauthorized_action(exception)
@@ -85,6 +91,8 @@ module ApiExceptionsHandler
       'You are not authorized to perform this action.'
     when ActionDispatch::Http::Parameters::ParseError
       "Invalid JSON format: #{exception.message}."
+    when AbstractController::ActionNotFound
+      "Action not found: #{exception.message}."
     else
       exception.message
     end
