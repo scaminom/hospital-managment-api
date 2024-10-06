@@ -1,20 +1,22 @@
 class Patient < ApplicationRecord
+  has_one :medical_record, dependent: :destroy
+
   VALID_BLOOD_TYPES = %w[A+ A- B+ B- AB+ AB- O+ O-].freeze
   VALID_GENDERS = %w[M F].freeze
 
   validates :insurance_number, presence: true,
-                               format:   { with: /\A\d{3}-[A-Z]{3}\z/, message: 'must be in the format 123-ABC' }
+                               format:   { with: /\A\d{3}-[A-Z]{3}\z/ }
   validates :first_name, presence: true, length: { maximum: 50 }
   validates :last_name, presence: true, length: { maximum: 50 }
   validates :date_of_birth, presence: true
-  validates :gender, presence: true, inclusion: { in: VALID_GENDERS, message: '%<value>s is not a valid gender' }
+  validates :gender, presence: true, inclusion: { in: VALID_GENDERS }
   validates :address, presence: true
   validates :phone_number, presence: true,
-                           format:   { with: /\A\d{10}\z/, message: 'must be 10 digits' }
+                           format:   { with: /\A\d{10}\z/ }
   validates :email, presence: true, uniqueness: { case_sensitive: false },
-            format: { with: URI::MailTo::EMAIL_REGEXP, message: 'must be a valid email address' }
+            format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :blood_type, presence:  true,
-                         inclusion: { in: VALID_BLOOD_TYPES, message: '%<value>s is not a valid blood type' }
+                         inclusion: { in: VALID_BLOOD_TYPES }
   validate :must_be_18_or_older
 
   before_save :normalize_attributes
@@ -35,9 +37,7 @@ class Patient < ApplicationRecord
   private
 
   def must_be_18_or_older
-    if date_of_birth.present? && date_of_birth > 18.years.ago.to_date
-      errors.add(:date_of_birth, 'patient must be 18 years old or older')
-    end
+    errors.add(:date_of_birth) if date_of_birth.present? && date_of_birth > 18.years.ago.to_date
   end
 
   def normalize_attributes
@@ -45,3 +45,4 @@ class Patient < ApplicationRecord
     self.last_name = last_name.strip.titleize if last_name.present?
   end
 end
+

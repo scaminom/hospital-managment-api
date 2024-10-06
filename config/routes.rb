@@ -10,12 +10,25 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :patients
+      resources :patients do
+        member do
+          get 'medical_record'
+        end
+      end
+
       resources :departments
       resources :doctors
+      resources :appointments
+
+      resources :visits do
+        collection do
+          post 'regular', to: 'visits#create_regular'
+          post 'emergency', to: 'visits#create_emergency'
+        end
+      end
     end
   end
 
   get 'up' => 'rails/health#show', as: :rails_health_check
-  match '*any', to: 'application#no_route_found', via: :all
+  match '*path', to: 'application#handle_no_route_found', via: :all
 end

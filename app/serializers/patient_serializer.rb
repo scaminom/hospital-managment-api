@@ -9,5 +9,10 @@ class PatientSerializer < Panko::Serializer
              :phone_number,
              :email,
              :blood_type,
-             :allergies
+             :allergies,
+             :medical_record_id
+
+  def medical_record_id
+    object.medical_record&.id
+  end
 end

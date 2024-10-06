@@ -2,99 +2,70 @@ module ApiExceptionsHandler
   extend ActiveSupport::Concern
 
   included do
-    around_action :handle_exceptions
+    rescue_from StandardError, with: :handle_standard_error
+    rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
+    rescue_from ActiveModel::ValidationError, ActiveRecord::RecordInvalid, ArgumentError, with: :handle_validation_error
+    rescue_from ActionController::ParameterMissing, with: :handle_parameter_missing
+    rescue_from ActionController::RoutingError, with: :handle_no_route_found
+    rescue_from CanCan::AccessDenied, with: :handle_unauthorized_action
+    rescue_from ActionDispatch::Http::Parameters::ParseError, with: :handle_parse_error
+    rescue_from ActiveRecord::InvalidForeignKey, with: :handle_conflict_entity
+    rescue_from ActiveRecord::RecordNotUnique, with: :handle_record_not_unique
+    rescue_from AbstractController::ActionNotFound, with: :handle_action_not_found
+    rescue_from ActionController::UnpermittedParameters, with: :handle_unpermitted_parameters
   end
 
-  def handle_exceptions
-    yield
-  rescue ActiveRecord::RecordNotFound => e
-    handle_record_not_found(e)
-  rescue ActiveModel::ValidationError, ActiveRecord::RecordInvalid, ArgumentError => e
-    handle_validation_error(e)
-  rescue ActionController::ParameterMissing => e
-    handle_parameter_missing(e)
-  rescue ActionController::RoutingError => e
-    handle_no_route_found(e)
-  rescue CanCan::AccessDenied => e
-    handle_unauthorized_action(e)
-  rescue ActionDispatch::Http::Parameters::ParseError => e
-    handle_parse_error(e)
-  rescue ActiveRecord::InvalidForeignKey => e
-    handle_conflict_entity(e)
-  rescue ActiveRecord::RecordNotUnique => e
-    handle_record_not_unique(e)
-  rescue StandardError => e
-    handle_standard_error(e)
-  rescue AbstractController::ActionNotFound => e
-    handle_action_not_found(e)
+  def format_error_message(exception)
+    exception.respond_to?(:record) ? exception.record.errors.full_messages : exception.message
   end
 
-  private
-
-  def handle_action_not_found(exception)
-    render_error_response(error: format_error_message(exception), status: 404)
-  end
-
-  def handle_record_not_found(exception)
-    render_error_response(error: format_error_message(exception), status: 404)
+  def handle_not_found(exception)
+    render_error_response(error: exception, status: :not_found)
   end
 
   def handle_validation_error(exception)
-    render_error_response(error: format_error_message(exception), status: 422)
+    render_error_response(error: exception, status: :unprocessable_entity)
   end
 
   def handle_parameter_missing(exception)
-    render_error_response(error: exception.message, status: 400)
+    render_error_response(error: exception.message, status: :bad_request)
   end
 
-  def handle_no_route_found(_exception)
-    route_info = "No route matches [#{request.method}] \"#{request.original_fullpath}\""
-    render_error_response(error: [route_info], status: 404)
+  def handle_no_route_found
+    render_error_response(error: "No route matches [#{request.method}] \"#{request.original_fullpath}\"", status: :not_found)
   end
 
   def handle_unauthorized_action(exception)
-    render_error_response(error: format_error_message(exception), status: 403)
+    render_error_response(error: exception, status: :forbidden)
   end
 
-  def handle_parse_error(_exception)
-    render_error_response(error: 'Invalid JSON format', status: 400)
+  def handle_parse_error
+    render_error_response(error: 'Invalid JSON format', status: :bad_request)
   end
 
   def handle_conflict_entity(exception)
-    render_error_response(error: format_error_message(exception), status: 409)
+    render_error_response(error: exception, status: :conflict)
   end
 
   def handle_record_not_unique(exception)
-    render_error_response(error: format_error_message(exception), status: 409, message: 'Record already exists.')
+    render_error_response(error: exception, status: :conflict, message: 'Record already exists.')
+  end
+
+  def handle_action_not_found(exception)
+    render_error_response(error: format_error_message(exception), status: :not_found)
   end
 
   def handle_standard_error(exception)
     log_exception(exception) unless Rails.env.test?
-    render_error_response(error: exception.message, status: 500)
+    render_error_response(error: 'An unexpected error occurred', status: :internal_server_error)
+  end
+
+  def handle_unpermitted_parameters(exception)
+    render_error_response(error: exception, status: :bad_request)
   end
 
   def log_exception(exception)
-    Rails.logger.error exception.class.to_s
-    Rails.logger.error exception.to_s
+    Rails.logger.error "#{exception.class}: #{exception.message}"
     Rails.logger.error exception.backtrace.join("\n")
-  end
-
-  def format_error_message(exception)
-    case exception
-    when ActiveRecord::RecordNotFound
-      "Resource not found: #{exception.model} with ID #{exception.id}."
-    when ActiveRecord::RecordInvalid
-      "Validation failed: #{exception.record.errors.full_messages.join(', ')}."
-    when ActiveRecord::InvalidForeignKey
-      'Cannot delete the record due to a foreign key constraint. Please ensure that related records are removed first.'
-    when CanCan::AccessDenied
-      'You are not authorized to perform this action.'
-    when ActionDispatch::Http::Parameters::ParseError
-      "Invalid JSON format: #{exception.message}."
-    when AbstractController::ActionNotFound
-      "Action not found: #{exception.message}."
-    else
-      exception.message
-    end
   end
 end
