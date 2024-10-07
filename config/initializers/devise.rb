@@ -15,6 +15,7 @@ Devise.setup do |config|
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
   # config.secret_key = '769c249def84196dcea661079f88602cae6fe9f72e053777e723f657cfe5c61f7518bde8ceb8aceafb21ce2d6a8d5f7981d50bb7883f0fb151651089764e48c3'
+  config.secret_key = ENV.fetch('DEVISE_SECRET_KEY', nil)
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -97,7 +98,7 @@ Devise.setup do |config|
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
-  config.skip_session_storage = %i[http_auth params_auth]
+  # config.skip_session_storage = %i[http_auth params_auth]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX
@@ -263,7 +264,7 @@ Devise.setup do |config|
   # should add them to the navigational formats lists.
   #
   # The "*/*" below is required to match Internet Explorer requests.
-  config.navigational_formats = []
+  # config.navigational_formats = []
 
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
@@ -320,5 +321,9 @@ Devise.setup do |config|
     ]
     jwt.expiration_time = 2.days.from_now.to_i
     jwt.algorithm = 'HS256'
+  end
+
+  config.warden do |warden|
+    warden.scope_defaults :user, store: false
   end
 end
