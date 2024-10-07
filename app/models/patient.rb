@@ -1,5 +1,6 @@
 class Patient < ApplicationRecord
   has_one :medical_record, dependent: :destroy
+  has_many :appointments, dependent: :destroy
 
   VALID_BLOOD_TYPES = %w[A+ A- B+ B- AB+ AB- O+ O-].freeze
   VALID_GENDERS = %w[M F].freeze
@@ -45,4 +46,3 @@ class Patient < ApplicationRecord
     self.last_name = last_name.strip.titleize if last_name.present?
   end
 end
-

@@ -4,24 +4,19 @@ module Api
       before_action :set_appointment, only: %i[show update destroy]
 
       def index
-        data = Appointment.all
-
-        response = Panko::ArraySerializer.new(
-          data, each_serializer: AppointmentSerializer
-        ).to_a
-
-        render_success_response(data: { appointments: response })
+        appointments = Appointment.includes(:patient, :doctor, :visit).all
+        render_success_response(data: { appointments: serialize_collection(appointments) })
       end
 
       def show
-        render_success_response(data: { appointment: appointment_serializer(@appointment) })
+        render_success_response(data: { appointment: serialize(@appointment) })
       end
 
       def create
         appointment = Appointment.new(appointment_params)
 
         if appointment.save
-          render_success_response(data: { appointment: appointment_serializer(appointment) }, status: :created)
+          render_success_response(data: { appointment: serialize(appointment) }, status: :created)
         else
           render_error_response(
             error:   appointment.errors.full_messages,
@@ -33,26 +28,15 @@ module Api
 
       def update
         if @appointment.update(appointment_params)
-          render_success_response(data: { appointment: appointment_serializer(@appointment) }, status: :created)
+          render_success_response(data: { appointment: serialize(@appointment) })
         else
-          render_error_response(
-            error:   @appointment.errors.full_messages,
-            status:  :unprocessable_entity,
-            message: 'appointment could not be updated'
-          )
+          render_error_response(errors: @appointment.errors, status: :unprocessable_entity)
         end
       end
 
       def destroy
-        if @appointment.destroy
-          render_success_response(message: 'appointment deleted successfully')
-        else
-          render_error_response(
-            error:   @appointment.errors.full_messages,
-            status:  404,
-            message: 'appointment could not be deleted'
-          )
-        end
+        @appointment.destroy
+        render_success_response(message: 'Appointment deleted successfully')
       end
 
       private
@@ -65,8 +49,12 @@ module Api
         params.require(:appointment).permit(*Appointment::WHITELISTED_ATTRIBUTES)
       end
 
-      def appointment_serializer(appointment)
+      def serialize(appointment)
         AppointmentSerializer.new.serialize(appointment)
+      end
+
+      def serialize_collection(appointments)
+        AppointmentSerializer.new.serialize(appointments)
       end
     end
   end

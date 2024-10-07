@@ -16,13 +16,14 @@ class Appointment < ApplicationRecord
   validate :doctor_availability
   validate :no_conflicting_appointments
 
-  WHITELISTED_ATTRIBUTES = [
-    :patient_id,
-    :doctor_id,
-    :scheduled_time
-  ].freeze
-
   BUFFER_TIME = 30.minutes
+
+  WHITELISTED_ATTRIBUTES = %i[
+    patient_id
+    doctor_id
+    scheduled_time
+    status
+  ].freeze
 
   private
 
@@ -36,19 +37,15 @@ class Appointment < ApplicationRecord
     conflicting_appointments = doctor.appointments
                                      .where(scheduled_time: (scheduled_time - BUFFER_TIME..scheduled_time + BUFFER_TIME))
                                      .where.not(id:)
-
     errors.add(:base, :doctor_unavailable) if conflicting_appointments.exists?
   end
 
   def no_conflicting_appointments
     return unless patient.present? && scheduled_time.present?
 
-    conflicting_appointments = Appointment.where(patient_id:)
-                                          .where.not(id:)
-                                          .where(
-                                            scheduled_time: (scheduled_time - BUFFER_TIME..scheduled_time + BUFFER_TIME)
-                                          )
-
+    conflicting_appointments = patient.appointments
+                                      .where.not(id:)
+                                      .where(scheduled_time: (scheduled_time - BUFFER_TIME..scheduled_time + BUFFER_TIME))
     errors.add(:scheduled_time, :conflicting_appointment) if conflicting_appointments.exists?
   end
 end

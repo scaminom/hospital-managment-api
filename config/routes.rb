@@ -19,13 +19,14 @@ Rails.application.routes.draw do
       resources :departments
       resources :doctors
       resources :appointments
+      resources :visits
 
-      resources :visits do
-        collection do
-          post 'regular', to: 'visits#create_regular'
-          post 'emergency', to: 'visits#create_emergency'
-        end
-      end
+      # resources :visits do
+      # collection do
+      #   post 'regular', to: 'visits#create_regular'
+      #   post 'emergency', to: 'visits#create_emergency'
+      # end
+      # end
     end
   end
 

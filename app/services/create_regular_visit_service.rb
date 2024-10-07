@@ -1,16 +1,19 @@
 class CreateRegularVisitService
-  def self.call(params)
-    new(params).call
+  def self.call(params, appointment_status)
+    new(params, appointment_status).call
   end
 
-  def initialize(params)
+  def initialize(params, appointment_status)
     @params = params
+    @appointment_status = appointment_status
   end
 
   def call
-    raise ArgumentError, 'Cannot create emergency visit with this service' if @params[:visit_type] == 'emergency'
+    raise ArgumentError, 'Cannot create regular visit with this service' if @params[:visit_type] == 'regular'
 
-    Visit.new(visit_params)
+    visit = Visit.new(visit_params)
+    visit.update_appointment_status(@appointment_status)
+    visit
   end
 
   private

@@ -50,9 +50,13 @@ en:
           attributes:
             date:
               past_date: "can't be in the past"
+            appointment:
+              unscheduled_appointment: "must be 'scheduled' to create a visit"
 
         appointment:
           attributes:
+            status:
+              cannot_update_completed_appointment: "Appointment is completed"
             base:
               doctor_unavailable: "Doctor already has a visit scheduled for this date"
             scheduled_time:

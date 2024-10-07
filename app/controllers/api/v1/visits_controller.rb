@@ -4,83 +4,40 @@ module Api
       before_action :set_visit, only: %i[show update destroy]
 
       def index
-        data = Visit.all
-
-        response = Panko::ArraySerializer.new(
-          data, each_serializer: VisitSerializer
-        ).to_a
-
-        render_success_response(data: { visits: response })
+        visits = Visit.includes(:medical_record, :doctor, :appointment).all
+        render_success_response(data: { visits: serialize_collection(visits) })
       end
 
       def show
-        render_success_response(data: { visit: visit_serializer(@visit) })
+        render_success_response(data: { visit: serialize(@visit) })
       end
 
-      # def create
-      #   visit = Visit.new(visit_params)
-
-      #   if visit.save
-      #     render_success_response(data: { visit: visit_serializer(visit) }, status: :created)
-      #   else
-      #     render_error_response(
-      #       error:   visit.errors.full_messages,
-      #       status:  :unprocessable_entity,
-      #       message: 'visit data could not be created'
-      #     )
-      #   end
-      # end
-
-      def create_regular
-        visit = CreateRegularVisitService.call(visit_params)
+      def create
+        visit = VisitFactory.create(params[:visit_type], visit_params)
 
         if visit.save
-          render_success_response(data: { visit: visit_serializer(visit) }, status: :created)
+          render_success_response(data: { visit: serialize(visit) }, status: :created)
         else
           render_error_response(
             error:   visit.errors.full_messages,
             status:  :unprocessable_entity,
             message: 'visit data could not be created'
           )
-        end
-      end
 
-      def create_emergency
-        visit = CreateEmergencyVisitService.call(visit_params)
-
-        if visit.save
-          render_success_response(data: { visit: visit_serializer(visit) }, status: :created)
-        else
-          render_error_response(
-            error:   visit.errors.full_messages,
-            status:  :unprocessable_entity,
-            message: 'visit data could not be created'
-          )
         end
       end
 
       def update
         if @visit.update(visit_params)
-          render_success_response(data: { visit: @visit }, status: :created)
+          render_success_response(data: { visit: serialize(@visit) })
         else
-          render_error_response(
-            error:   @visit.errors.full_messages,
-            status:  :unprocessable_entity,
-            message: 'visit could not be updated'
-          )
+          render_error_response(errors: @visit.errors, status: :unprocessable_entity)
         end
       end
 
       def destroy
-        if @visit.destroy
-          render_success_response(message: 'visit deleted successfully')
-        else
-          render_error_response(
-            error:   @visit.errors.full_messages,
-            status:  404,
-            message: 'visit could not be deleted'
-          )
-        end
+        @visit.destroy
+        render_success_response(message: 'Visit deleted successfully')
       end
 
       private
@@ -90,11 +47,15 @@ module Api
       end
 
       def visit_params
-        params.require(:visit).permit(*Visit::WHITELISTED_ATTRIBUTES)
+        params.require(:visit).permit(*Visit::WHITELISTED_ATTRIBUTES, :appointment_status)
       end
 
-      def visit_serializer(visit)
+      def serialize(visit)
         VisitSerializer.new.serialize(visit)
+      end
+
+      def serialize_collection(visits)
+        VisitSerializer.new(visits).serializable_hash
       end
     end
   end

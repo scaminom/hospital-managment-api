@@ -19,17 +19,15 @@ class Visit < ApplicationRecord
 
   validates :visit_type, presence: true
   validates :priority_level, presence: true, if: :emergency?
-  validates :appointment_id, presence: true, unless: :emergency?
+  validates :appointment, presence: true, unless: :emergency?
+  validate :appointment_must_be_scheduled, if: -> { appointment.present? && !emergency? }
 
-  after_save :set_date
-
-  WHITELISTED_ATTRIBUTES = [
-    :visit_type,
-    :priority_level,
-    :medical_record_id,
-    :doctor_id,
-    :appointment_id,
-    :appointment_status
+  WHITELISTED_ATTRIBUTES = %i[
+    visit_type
+    priority_level
+    medical_record_id
+    doctor_id
+    appointment_id
   ].freeze
 
   private
@@ -38,7 +36,7 @@ class Visit < ApplicationRecord
     visit_type == 'emergency'
   end
 
-  def set_date
-    self.date = Time.zone.now
+  def appointment_must_be_scheduled
+    errors.add(:appointment, :unscheduled_appointment) unless appointment.scheduled?
   end
 end
