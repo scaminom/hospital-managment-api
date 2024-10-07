@@ -15,7 +15,7 @@ module Api
       def create
         visit = VisitFactory.create(params[:visit_type], visit_params)
 
-        if visit.save
+        if visit.persisted?
           render_success_response(data: { visit: serialize(visit) }, status: :created)
         else
           render_error_response(

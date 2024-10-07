@@ -25,6 +25,10 @@ class Appointment < ApplicationRecord
     status
   ].freeze
 
+  def scheduled?
+    status == 'scheduled'
+  end
+
   private
 
   def scheduled_time_cannot_be_in_the_past
