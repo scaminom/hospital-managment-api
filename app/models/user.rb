@@ -7,6 +7,7 @@ class User < ApplicationRecord
   enum :role, { guess: 0, admin: 1, doctor: 2, nurse: 3 }
 
   validates :email, uniqueness: true, allow_blank: true, on: :update
+  validates :email, format: URI::MailTo::EMAIL_REGEXP
 
   WHITELISTED_ATTRIBUTES = [
     :username,

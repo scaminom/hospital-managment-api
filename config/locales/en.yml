@@ -1,31 +1,64 @@
-# Files in the config/locales directory are used for internationalization and
-# are automatically loaded by Rails. If you want to use locales other than
-# English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t "hello"
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t("hello") %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# To learn more about the API, please read the Rails Internationalization guide
-# at https://guides.rubyonrails.org/i18n.html.
-#
-# Be aware that YAML interprets the following case-insensitive strings as
-# booleans: `true`, `false`, `on`, `off`, `yes`, `no`. Therefore, these strings
-# must be quoted to be interpreted as strings. For example:
-#
-#     en:
-#       "yes": yup
-#       enabled: "ON"
-
 en:
-  hello: "Hello world"
+  errors:
+    format: "%{attribute} %{message}"
+    messages:
+      accepted: must be accepted
+      blank: can't be blank
+      present: must be blank
+      confirmation: doesn't match
+      empty: can't be empty
+      equal_to: must be equal to %{count}
+      even: must be even
+      exclusion: is reserved
+      greater_than: must be greater than %{count}
+      greater_than_or_equal_to: must be greater than or equal to %{count}
+      inclusion: is not included in the list
+      invalid: is not valid
+      less_than: must be less than %{count}
+      less_than_or_equal_to: must be less than or equal to %{count}
+      model_invalid: "Validation failed: %{errors}"
+      not_a_number: is not a number
+      not_an_integer: must be an integer
+      odd: must be odd
+      required: must exist
+      taken: has already been taken
+      too_long:
+        one: "is too long (1 character maximum)"
+        other: "is too long (%{count} characters maximum)"
+      too_short:
+        one: "is too short (1 character minimum)"
+        other: "is too short (%{count} characters minimum)"
+      wrong_length:
+        one: "is the wrong length (1 character)"
+        other: "is the wrong length (%{count} characters)"
+
+      other_than: must be other than %{count}
+  activerecord:
+    errors:
+      models:
+        patient:
+          attributes:
+            insurance_number:
+              invalid: "must be in the format 123-ABC"
+            date_of_birth:
+              invalid: "patient must be 18 years old or older"
+            gender:
+              inclusion: "%{value} is not a valid gender"
+            blood_type:
+              inclusion: "%{value} is not a valid blood type"
+        visit:
+          attributes:
+            date:
+              past_date: "can't be in the past"
+            appointment:
+              unscheduled_appointment: "must be 'scheduled' to create a visit"
+
+        appointment:
+          attributes:
+            status:
+              cannot_update_completed_appointment: "Appointment is completed"
+            base:
+              doctor_unavailable: "Doctor already has a visit scheduled for this date"
+            scheduled_time:
+              past_date: "can't be in the past"
+              conflicting_appointment: "conflicts with another appointment. Please choose a time at least 30 minutes apart from other appointments"

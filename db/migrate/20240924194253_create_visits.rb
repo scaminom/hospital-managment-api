@@ -8,6 +8,7 @@ class CreateVisits < ActiveRecord::Migration[7.1]
       t.timestamps
 
       t.references :medical_record, null: false, foreign_key: true
+      t.references :doctor, null: false, foreign_key: true
     end
   end
 end

@@ -1,6 +1,8 @@
 class Doctor < ApplicationRecord
   belongs_to :user
   belongs_to :department
+  has_many :visits, dependent: :restrict_with_error
+  has_many :appointments, dependent: :restrict_with_error
 
   accepts_nested_attributes_for :user, update_only: true
 
@@ -17,4 +19,3 @@ class Doctor < ApplicationRecord
     }
   ].freeze
 end
-

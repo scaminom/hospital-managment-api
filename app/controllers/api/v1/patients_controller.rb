@@ -1,7 +1,7 @@
 module Api
   module V1
     class PatientsController < ApplicationController
-      before_action :set_patient, only: %i[show update destroy]
+      before_action :set_patient, only: %i[show update destroy medical_record]
 
       def index
         data = Patient.all
@@ -18,15 +18,14 @@ module Api
       end
 
       def create
-        patient = Patient.new(patient_params)
-
-        if patient.save
-          render_success_response(data: { patient: }, status: :created)
+        patient = PatientRegistrationService.new(patient_params).call
+        if patient.persisted?
+          render_success_response(data: { patient: patient_serializer(patient) }, status: :created)
         else
           render_error_response(
             patient.errors.full_messages,
             status:  :unprocessable_entity,
-            message: 'patient data could not be created'
+            message: 'Patient could not be created'
           )
         end
       end
@@ -55,6 +54,20 @@ module Api
         end
       end
 
+      # Fetches the medical record for the patient
+      def medical_record
+        medical_record = @patient.medical_record
+        if medical_record
+          render_success_response(data: { medical_record: medical_record_serializer(medical_record) })
+        else
+          render_error_response(
+            error:   ['Medical record not found'],
+            status:  :not_found,
+            message: 'Medical record could not be retrieved'
+          )
+        end
+      end
+
       private
 
       def set_patient
@@ -67,6 +80,10 @@ module Api
 
       def patient_serializer(patient)
         PatientSerializer.new.serialize(patient)
+      end
+
+      def medical_record_serializer(medical_record)
+        MedicalRecordSerializer.new.serialize(medical_record)
       end
     end
   end
