@@ -18,7 +18,6 @@ Rails.application.routes.draw do
 
       resources :departments
       resources :doctors
-      resources :appointments
       resources :visits
 
       # resources :visits do

@@ -1,7 +1,6 @@
 class Visit < ApplicationRecord
   belongs_to :medical_record
   belongs_to :doctor
-  belongs_to :appointment, optional: true
 
   enum :visit_type, {
     routine_checkup:         0,
@@ -19,24 +18,17 @@ class Visit < ApplicationRecord
 
   validates :visit_type, presence: true
   validates :priority_level, presence: true, if: :emergency?
-  validates :appointment, presence: true, unless: :emergency?
-  validate :appointment_must_be_scheduled, if: -> { appointment.present? && !emergency? }
 
   WHITELISTED_ATTRIBUTES = %i[
     visit_type
     priority_level
     medical_record_id
     doctor_id
-    appointment_id
   ].freeze
 
   private
 
   def emergency?
     visit_type == 'emergency'
-  end
-
-  def appointment_must_be_scheduled
-    errors.add(:appointment, :unscheduled_appointment) unless appointment.scheduled?
   end
 end

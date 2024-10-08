@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_06_141406) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_08_155824) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -30,18 +30,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_06_141406) do
     t.datetime "updated_at", null: false
     t.bigint "visit_id", null: false
     t.index ["visit_id"], name: "index_anamneses_on_visit_id"
-  end
-
-  create_table "appointments", force: :cascade do |t|
-    t.bigint "patient_id", null: false
-    t.bigint "doctor_id", null: false
-    t.datetime "scheduled_time", null: false
-    t.integer "status", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["doctor_id", "scheduled_time"], name: "index_appointments_on_doctor_id_and_scheduled_time"
-    t.index ["doctor_id"], name: "index_appointments_on_doctor_id"
-    t.index ["patient_id"], name: "index_appointments_on_patient_id"
   end
 
   create_table "departments", force: :cascade do |t|
@@ -120,26 +108,21 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_06_141406) do
 
   create_table "visits", force: :cascade do |t|
     t.integer "visit_type", null: false
-    t.integer "priority_level"
+    t.integer "priority_level", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "medical_record_id", null: false
     t.bigint "doctor_id", null: false
-    t.bigint "appointment_id"
-    t.index ["appointment_id"], name: "index_visits_on_appointment_id"
     t.index ["doctor_id"], name: "index_visits_on_doctor_id"
     t.index ["medical_record_id"], name: "index_visits_on_medical_record_id"
   end
 
   add_foreign_key "anamneses", "visits"
-  add_foreign_key "appointments", "doctors"
-  add_foreign_key "appointments", "patients"
   add_foreign_key "doctors", "departments"
   add_foreign_key "doctors", "users"
   add_foreign_key "laboratory_results", "visits"
   add_foreign_key "medical_records", "patients"
   add_foreign_key "prescriptions", "visits"
-  add_foreign_key "visits", "appointments"
   add_foreign_key "visits", "doctors"
   add_foreign_key "visits", "medical_records"
 end

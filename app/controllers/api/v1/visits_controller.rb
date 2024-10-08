@@ -4,7 +4,7 @@ module Api
       before_action :set_visit, only: %i[show update destroy]
 
       def index
-        visits = Visit.includes(:medical_record, :doctor, :appointment).all
+        visits = Visit.includes(:medical_record, :doctor).all
         render_success_response(data: { visits: serialize_collection(visits) })
       end
 
@@ -15,7 +15,7 @@ module Api
       def create
         visit = VisitFactory.create(params[:visit_type], visit_params)
 
-        if visit.persisted?
+        if visit.save!
           render_success_response(data: { visit: serialize(visit) }, status: :created)
         else
           render_error_response(
@@ -47,7 +47,7 @@ module Api
       end
 
       def visit_params
-        params.require(:visit).permit(*Visit::WHITELISTED_ATTRIBUTES, :appointment_status)
+        params.require(:visit).permit(*Visit::WHITELISTED_ATTRIBUTES)
       end
 
       def serialize(visit)
