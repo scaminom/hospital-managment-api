@@ -11,21 +11,14 @@ class VisitFactory
   end
 
   def self.create_regular_visit(params)
-    ActiveRecord::Base.transaction do
-      visit = Visit.new(params.except(:appointment_status))
-      visit.visit_type = params[:visit_type] || :routine_checkup
-      update_appointment_status(visit, params[:appointment_status])
-      visit
-    end
+    visit = Visit.new(params)
+    visit.visit_type = params[:visit_type] || :routine_checkup
+    visit
   end
 
   def self.create_emergency_visit(params)
     visit = Visit.new(params)
     visit.visit_type = :emergency
     visit
-  end
-
-  def self.update_appointment_status(visit, status)
-    visit.appointment.update(status:) if visit.appointment && status.present?
   end
 end
