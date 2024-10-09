@@ -13,19 +13,13 @@ Rails.application.routes.draw do
       resources :patients do
         member do
           get 'medical_record'
+          get 'visits'
         end
       end
 
       resources :departments
       resources :doctors
       resources :visits
-
-      # resources :visits do
-      # collection do
-      #   post 'regular', to: 'visits#create_regular'
-      #   post 'emergency', to: 'visits#create_emergency'
-      # end
-      # end
     end
   end
 
