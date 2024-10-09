@@ -18,8 +18,8 @@ module Api
           end
         end
 
-        def destroy
-          token = extract_token_from_header
+        def respond_to_on_destroy
+          token = request.headers['Authorization']&.split&.last
           return handle_missing_token if token.nil?
 
           decoder = JwtDecoder.new(token)
@@ -31,7 +31,6 @@ module Api
           current_user = find_user(jwt_payload)
           return handle_user_not_found if current_user.nil?
 
-          sign_out(current_user)
           handle_successful_logout
         end
 
@@ -61,10 +60,6 @@ module Api
             message: 'Authentication failed. Please check your credentials and try again.',
             status:  :unauthorized
           )
-        end
-
-        def extract_token_from_header
-          request.headers['Authorization']&.split&.last
         end
 
         def find_user(jwt_payload)
