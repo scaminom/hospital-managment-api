@@ -1,7 +1,7 @@
 module Api
   module V1
     class PatientsController < ApplicationController
-      before_action :set_patient, only: %i[show update destroy medical_record]
+      before_action :set_patient, only: %i[show update destroy medical_record visits]
 
       def index
         data = Patient.all
@@ -11,6 +11,16 @@ module Api
         ).to_a
 
         render_success_response(data: { patients: response })
+      end
+
+      def visits
+        visits = @patient.visits.includes(:doctor)
+
+        response = Panko::ArraySerializer.new(
+          visits, each_serializer: VisitSerializer
+        ).to_a
+
+        render_success_response(data: { visits: response })
       end
 
       def show

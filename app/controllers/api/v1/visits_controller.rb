@@ -4,8 +4,13 @@ module Api
       before_action :set_visit, only: %i[show update destroy]
 
       def index
-        visits = Visit.includes(:medical_record, :doctor).all
-        render_success_response(data: { visits: serialize_collection(visits) })
+        data = Visit.includes(:medical_record, :doctor).all
+
+        response = Panko::ArraySerializer.new(
+          data, each_serializer: VisitSerializer
+        ).to_a
+
+        render_success_response(data: { visits: response })
       end
 
       def show
@@ -52,10 +57,6 @@ module Api
 
       def serialize(visit)
         VisitSerializer.new.serialize(visit)
-      end
-
-      def serialize_collection(visits)
-        VisitSerializer.new(visits).serializable_hash
       end
     end
   end
