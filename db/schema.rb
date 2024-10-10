@@ -10,26 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_08_155824) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_10_152328) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "anamneses", force: :cascade do |t|
-    t.string "gender", null: false
-    t.integer "age", null: false
-    t.string "birth_place", null: false
     t.string "current_residence", null: false
     t.string "education_level", null: false
     t.string "occupation", null: false
     t.string "marital_status", null: false
-    t.string "blood_type", null: false
     t.string "religion", null: false
     t.string "handedness", null: false
     t.string "family_reference", null: false
+    t.string "gender_identity"
+    t.text "medical_history"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "visit_id", null: false
-    t.index ["visit_id"], name: "index_anamneses_on_visit_id"
+    t.bigint "medical_record_id", null: false
+    t.index ["medical_record_id"], name: "index_anamneses_on_medical_record_id"
   end
 
   create_table "departments", force: :cascade do |t|
@@ -48,13 +46,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_155824) do
   end
 
   create_table "laboratory_results", force: :cascade do |t|
-    t.string "test_type", null: false
-    t.string "test_name", null: false
-    t.text "test_result", null: false
-    t.datetime "performed_at", null: false
+    t.string "lab_type", null: false
+    t.string "name", null: false
+    t.text "results"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "visit_id"
+    t.integer "status", default: 0, null: false
     t.index ["visit_id"], name: "index_laboratory_results_on_visit_id"
   end
 
@@ -76,7 +74,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_155824) do
     t.string "phone_number", null: false
     t.string "email", null: false
     t.string "blood_type", null: false
-    t.text "allergies", null: false
+    t.text "allergies"
+    t.string "birth_place"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["email"], name: "index_patients_on_email", unique: true
@@ -113,11 +112,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_08_155824) do
     t.datetime "updated_at", null: false
     t.bigint "medical_record_id", null: false
     t.bigint "doctor_id", null: false
+    t.string "room", null: false
     t.index ["doctor_id"], name: "index_visits_on_doctor_id"
     t.index ["medical_record_id"], name: "index_visits_on_medical_record_id"
   end
 
-  add_foreign_key "anamneses", "visits"
+  add_foreign_key "anamneses", "medical_records"
   add_foreign_key "doctors", "departments"
   add_foreign_key "doctors", "users"
   add_foreign_key "laboratory_results", "visits"

@@ -10,7 +10,8 @@ class CreatePatients < ActiveRecord::Migration[7.1]
       t.string :phone_number, null: false
       t.string :email, null: false
       t.string :blood_type, null: false
-      t.text :allergies, null: false
+      t.text :allergies
+      t.string :birth_place
 
       t.timestamps
     end
