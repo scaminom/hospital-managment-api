@@ -1,4 +1,5 @@
 class Patient < ApplicationRecord
+  has_one :anamnesis, through: :medical_record
   has_one :medical_record, dependent: :destroy
   has_many :visits, dependent: :destroy, through: :medical_record
 
@@ -32,8 +33,20 @@ class Patient < ApplicationRecord
     :phone_number,
     :email,
     :blood_type,
-    :allergies
+    :allergies,
+    :birth_place
   ].freeze
+
+  def age
+    return nil if date_of_birth.nil?
+
+    now = Date.current
+    years = now.year - date_of_birth.year
+
+    years -= 1 if now.month < date_of_birth.month || (now.month == date_of_birth.month && now.day < date_of_birth.day)
+
+    years
+  end
 
   private
 

@@ -1,7 +1,7 @@
 class Doctor < ApplicationRecord
   belongs_to :user
   belongs_to :department
-  has_many :visits, dependent: :restrict_with_error
+  has_many :visits, dependent: :destroy
 
   accepts_nested_attributes_for :user, update_only: true
 

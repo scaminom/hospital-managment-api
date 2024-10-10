@@ -1,6 +1,10 @@
 class Visit < ApplicationRecord
   belongs_to :medical_record
   belongs_to :doctor
+  has_one :patient, through: :medical_record
+  has_one :anamnesis, through: :medical_record
+  has_many :prescriptions, dependent: :restrict_with_error
+  has_many :laboratory_results, dependent: :restrict_with_error
 
   enum :visit_type, {
     routine_checkup:         0,
@@ -24,6 +28,7 @@ class Visit < ApplicationRecord
     priority_level
     medical_record_id
     doctor_id
+    room
   ].freeze
 
   private
