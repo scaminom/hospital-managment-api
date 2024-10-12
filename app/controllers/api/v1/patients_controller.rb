@@ -7,7 +7,9 @@ module Api
         data = Patient.all
 
         response = Panko::ArraySerializer.new(
-          data, each_serializer: PatientSerializer
+          data,
+          each_serializer: PatientSerializer,
+          except:          [:anamnesis]
         ).to_a
 
         render_success_response(data: { patients: response })
@@ -24,13 +26,21 @@ module Api
       end
 
       def show
-        render_success_response(data: { patient: patient_serializer(@patient) })
+        render_success_response(
+          data: {
+            patient: PatientSerializer.new(except: [:anamnesis]).serialize(@patient)
+          }
+        )
       end
 
       def create
         patient = PatientRegistrationService.new(patient_params).call
         if patient.persisted?
-          render_success_response(data: { patient: patient_serializer(patient) }, status: :created)
+          render_success_response(
+            data: {
+              patient: PatientSerializer.new(except: [:anamnesis]).serialize(@patient)
+            }, status: :created
+          )
         else
           render_error_response(
             patient.errors.full_messages,
@@ -42,7 +52,11 @@ module Api
 
       def update
         if @patient.update(patient_params)
-          render_success_response(data: { patient: @patient }, status: :created)
+          render_success_response(
+            data: {
+              patient: PatientSerializer.new(except: [:anamnesis]).serialize(@patient)
+            }, status: :created
+          )
         else
           render_error_response(
             @patient.errors.full_messages,
@@ -64,7 +78,6 @@ module Api
         end
       end
 
-      # Fetches the medical record for the patient
       def medical_record
         medical_record = @patient.medical_record
         if medical_record

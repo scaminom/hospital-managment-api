@@ -1,6 +1,6 @@
 class Patient < ApplicationRecord
-  has_one :anamnesis, through: :medical_record
   has_one :medical_record, dependent: :destroy
+  has_one :anamnesis, through: :medical_record
   has_many :visits, dependent: :destroy, through: :medical_record
 
   VALID_BLOOD_TYPES = %w[A+ A- B+ B- AB+ AB- O+ O-].freeze

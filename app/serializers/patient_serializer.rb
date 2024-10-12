@@ -14,6 +14,8 @@ class PatientSerializer < Panko::Serializer
              :birth_place,
              :full_name
 
+  has_one :anamnesis, serializer: AnamnesisSerializer
+
   def medical_record_id
     object.medical_record&.id
   end

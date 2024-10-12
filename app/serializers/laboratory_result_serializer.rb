@@ -3,8 +3,7 @@ class LaboratoryResultSerializer < Panko::Serializer
              :lab_type,
              :name,
              :results,
-             :status,
-             :visit_id
+             :status
 
   aliases created_at: :performed_at
 end
