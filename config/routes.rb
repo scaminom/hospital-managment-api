@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       resources :departments
       resources :doctors
       resources :visits
+      resources :laboratory_results
     end
   end
 

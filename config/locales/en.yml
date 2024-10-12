@@ -50,3 +50,7 @@ en:
           attributes:
             date:
               past_date: "can't be in the past"
+        laboratory_result:
+          attributes:
+            results:
+              status_creation: "can only be set when the status is 'completed'"
