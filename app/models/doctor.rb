@@ -7,7 +7,7 @@ class Doctor < ApplicationRecord
 
   validates :speciality, presence: true
   validates :license_number, presence: true, uniqueness: true,
-                             format: { with: /\A[A-Z]{2}\d{6}\z/, message: 'must be in the format AA123456' }
+                             format: { with: /\A[A-Z]{2}\d{6}\z/ }
 
   WHITELISTED_ATTRIBUTES = [
     :speciality,

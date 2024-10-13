@@ -17,9 +17,15 @@ Rails.application.routes.draw do
         end
       end
 
+      resources :visits do
+        member do
+          get 'prescriptions'
+          get 'laboratory_results'
+        end
+      end
+
       resources :departments
       resources :doctors
-      resources :visits
       resources :laboratory_results
       resources :prescriptions
     end

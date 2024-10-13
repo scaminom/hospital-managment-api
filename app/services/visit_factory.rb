@@ -1,6 +1,6 @@
 class VisitFactory
   def self.create(type, params)
-    case type.to_sym
+    case type
     when :regular
       create_regular_visit(params)
     when :emergency
@@ -19,6 +19,7 @@ class VisitFactory
   def self.create_emergency_visit(params)
     visit = Visit.new(params)
     visit.visit_type = :emergency
+    visit.priority_level = :urgent
     visit
   end
 end

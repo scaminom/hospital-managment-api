@@ -4,7 +4,7 @@ module Api
       before_action :set_patient, only: %i[show update destroy medical_record visits]
 
       def index
-        data = Patient.all
+        data = Patient.includes(:medical_record).all
 
         response = Panko::ArraySerializer.new(
           data,
@@ -19,7 +19,9 @@ module Api
         visits = @patient.visits.includes(:doctor)
 
         response = Panko::ArraySerializer.new(
-          visits, each_serializer: VisitSerializer
+          visits,
+          each_serializer: VisitSerializer,
+          only:            [:id, :visit_type, :created_at, :priority_level]
         ).to_a
 
         render_success_response(data: { visits: response })
