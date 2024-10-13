@@ -54,3 +54,7 @@ en:
           attributes:
             results:
               status_creation: "can only be set when the status is 'completed'"
+        doctor:
+          attributes:
+            license_number:
+              format: "must be in the format AA123456"

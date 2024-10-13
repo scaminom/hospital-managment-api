@@ -8,7 +8,7 @@ class VisitSerializer < Panko::Serializer
 
   # delegate :overview, to: :object
 
-  has_one :doctor, serializer: DoctorSerializer, only: [:id, :full_name, :speciality, :license_number]
+  has_one :doctor, serializer: DoctorSerializer, only: [:id, :full_name]
   has_one :medical_record, serializer: MedicalRecordSerializer
   has_many :prescriptions, each_serializer: PrescriptionSerializer
   has_many :laboratory_results, each_serializer: LaboratoryResultSerializer
