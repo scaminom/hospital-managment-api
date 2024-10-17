@@ -28,6 +28,7 @@ Rails.application.routes.draw do
       resources :doctors
       resources :laboratory_results
       resources :prescriptions
+      resources :anamneses
     end
   end
 
