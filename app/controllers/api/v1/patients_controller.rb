@@ -40,7 +40,7 @@ module Api
         if patient.persisted?
           render_success_response(
             data: {
-              patient: PatientSerializer.new(except: [:anamnesis]).serialize(@patient)
+              patient:
             }, status: :created
           )
         else
